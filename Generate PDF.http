@@ -1,0 +1,8 @@
+### GET request to example server
+POST http://localhost:4000/generate_pdf
+Content-Type: application/json
+
+{
+  "title": "Hello World",
+  "html": "<h1>Hello World</h1>"
+}
