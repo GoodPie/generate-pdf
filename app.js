@@ -4,7 +4,6 @@ const express = require('express')
 const app = express()
 const port = 4000
 
-
 const browserPool = [];
 const browserPoolLimit = 5; // Adjust the pool size
 const maxRequestsPerBrowser = 10; // Limit requests before replacement
@@ -76,7 +75,7 @@ app.post('/generate_pdf', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
+    console.log(`PDF Generation listening at http://localhost:${port}`);
 });
 
 process.on('SIGINT', async () => {
