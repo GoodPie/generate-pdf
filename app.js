@@ -4,12 +4,14 @@ const express = require('express')
 const app = express()
 const port = 4000
 
+
 const browserPool = [];
-const browserPoolLimit = 10; // Adjust the pool size
-const maxRequestsPerBrowser = 100; // Limit requests before replacement
+const browserPoolLimit = 5; // Adjust the pool size
+const maxRequestsPerBrowser = 10; // Limit requests before replacement
 const browserUsageCount = {}; // Track usage per browser instance
 
-app.use(express.json());
+app.use(express.json({limit: '10mb'})); // Increased limit
+app.use(express.urlencoded({extended: true, limit: '10mb'}));
 
 const initializeBrowserPool = async () => {
     for (let i = 0; i < browserPoolLimit; i++) {
@@ -29,12 +31,22 @@ app.post('/generate_pdf', async (req, res) => {
     const html = req.body.html;
     const title = req.body.title;
 
+    console.log('Generating PDF for:', title);
+
     const browser = browserPool.shift();
 
     try {
         const page = await browser.newPage();
-        await page.setContent(html);
-        const pdf = await page.pdf({format: 'A4'}); // Added format for consistency
+        await page.setContent(html, {waitUntil: 'load'});
+        const pdf = await page.pdf({
+            format: 'A4', printBackground: true,
+            margin: {
+                top: '0',
+                right: '0',
+                bottom: '0',
+                left: '0'
+            }
+        }); // Added format for consistency
 
         // Add Content-Disposition header with suggested filename
         const filename = title + '.pdf'; // Construct the filename
