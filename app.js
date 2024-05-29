@@ -51,7 +51,10 @@ app.post('/generate_pdf', async (req, res) => {
             // Replace the browser if it has reached the limit
             await browser.close();
             browserPool.splice(browserPool.indexOf(browser), 1); // Remove
-            const newBrowser = await puppeteer.launch({ /* options */});
+            const newBrowser = await puppeteer.launch({
+                headless: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox']
+            });
             browserPool.push(newBrowser);
             browserUsageCount[newBrowser] = 0; // Reset count for new browser
         } else {
